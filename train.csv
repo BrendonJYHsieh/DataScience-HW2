@@ -1,4 +1,4 @@
-song_id,Feature 1,Feature 2,Feature 3,Feature 4,Feature 5,Feature 6,Feature 7,Feature 8,Feature 9,Feature 10,Feature 11,Feature 12,Feature 13
+song_id,acousticness,energy,danceability,popularity,tempo,liveness,valence,duration_ms,loudness,speechiness,mode,instrumentalness,key
 0,0.147,0.798,0.745,46,111.016,0.197,0.388,240000,-5.436,0.0384,1,0.651,F
 1,0.0658,0.804,0.521,66,143.952,0.0521,0.553,224700,-4.395,0.0569,0,0,C
 2,0.0395,0.96,0.755,67,99.023,0.332,0.661,170440,-3.189,0.123,1,2.43E-05,E
