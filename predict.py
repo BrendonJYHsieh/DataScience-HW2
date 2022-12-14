@@ -6,7 +6,6 @@ from sklearn.cluster import KMeans
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import DBSCAN
 from sklearn.decomposition import PCA
 import csv
@@ -15,6 +14,8 @@ train_data = pd.read_csv("train.csv").drop("song_id", axis=1)
 test_data = pd.read_csv("test_3000.csv")
 
 processed_train_data = train_data
+processed_train_data.drop(columns=['duration_ms', 'popularity'])
+
 #processed_train_data = processed_train_data.filter(items=["Feature 1"], axis=1)
 
 # for column in processed_train_data.columns:
@@ -30,7 +31,7 @@ processed_train_data = train_data
 
 le = LabelEncoder()
 processed_train_data['key'] = le.fit_transform(processed_train_data['key'])
-processed_train_data = processed_train_data
+processed_train_data = processed_train_data.values
 
 scaler = MinMaxScaler(feature_range=(0, 1))
 processed_train_data = scaler.fit_transform(processed_train_data)
@@ -58,8 +59,8 @@ processed_train_data = scaler.fit_transform(processed_train_data)
 
 #processed_train_data.to_csv('./test.csv',index=False)
 
-kmeans = KMeans(n_clusters = 13, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 42)
-y_kmeans = kmeans.fit_predict(processed_train_data)
+gmm = GaussianMixture(n_components=2).fit(processed_train_data)
+labels = gmm.predict(processed_train_data)
 
 # fig, ax = plt.subplots(figsize=(13,11))
 # ax = fig.add_subplot(111, projection='3d')
@@ -80,11 +81,6 @@ y_kmeans = kmeans.fit_predict(processed_train_data)
 # plt.savefig('clusters.png')
 # plt.show()
 
-# dbscan = DBSCAN(eps = 0.25, min_samples = 10)
-# dbscan.fit(processed_train_data)
-# labels = dbscan.labels_
-
-
 
 # separate the features
 
@@ -99,12 +95,11 @@ y_kmeans = kmeans.fit_predict(processed_train_data)
 # kmeans.fit(X_std)
 
 # kmeans.labels_
-# print(list(set(labels)))
 
-# for i in list(set(labels)):
-#     print(i,labels.tolist().count(i))
 
-output = y_kmeans
+output = labels
+for i in list(set(output)):
+    print(i,output.tolist().count(i))
 ans = []
 for index, row in test_data.iterrows():
     if(output[row['col_1']]==output[row['col_2']]):
