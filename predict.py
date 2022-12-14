@@ -58,8 +58,8 @@ processed_train_data = scaler.fit_transform(processed_train_data)
 
 #processed_train_data.to_csv('./test.csv',index=False)
 
-# kmeans = KMeans(n_clusters = 9, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
-# y_kmeans = kmeans.fit_predict(scaled)
+kmeans = KMeans(n_clusters = 13, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 42)
+y_kmeans = kmeans.fit_predict(processed_train_data)
 
 # fig, ax = plt.subplots(figsize=(13,11))
 # ax = fig.add_subplot(111, projection='3d')
@@ -80,9 +80,9 @@ processed_train_data = scaler.fit_transform(processed_train_data)
 # plt.savefig('clusters.png')
 # plt.show()
 
-dbscan = DBSCAN(eps = 0.25, min_samples = 10)
-dbscan.fit(processed_train_data)
-labels = dbscan.labels_
+# dbscan = DBSCAN(eps = 0.25, min_samples = 10)
+# dbscan.fit(processed_train_data)
+# labels = dbscan.labels_
 
 
 
@@ -99,13 +99,12 @@ labels = dbscan.labels_
 # kmeans.fit(X_std)
 
 # kmeans.labels_
-print(list(set(labels)))
+# print(list(set(labels)))
 
-for i in list(set(labels)):
-    print(i,labels.tolist().count(i))
+# for i in list(set(labels)):
+#     print(i,labels.tolist().count(i))
 
-output = labels
-
+output = y_kmeans
 ans = []
 for index, row in test_data.iterrows():
     if(output[row['col_1']]==output[row['col_2']]):
