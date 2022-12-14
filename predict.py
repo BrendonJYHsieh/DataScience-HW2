@@ -17,7 +17,10 @@ test_data = pd.read_csv("test_3000.csv")
 processed_train_data = train_data
 #processed_train_data = processed_train_data.filter(items=["Feature 1"], axis=1)
 
-
+# for column in processed_train_data.columns:
+#     print("Column: ", column)
+#     print("Unique values: ", processed_train_data[column].unique())
+#     print()
 
 
 
@@ -27,12 +30,15 @@ processed_train_data = train_data
 
 le = LabelEncoder()
 processed_train_data['key'] = le.fit_transform(processed_train_data['key'])
+processed_train_data = processed_train_data
 
-# scaler = MinMaxScaler(feature_range=(0, 1))
-# processed_train_data = pd.DataFrame(scaler.fit_transform(processed_train_data), columns=processed_train_data.columns)
+scaler = MinMaxScaler(feature_range=(0, 1))
+processed_train_data = scaler.fit_transform(processed_train_data)
 
-scaler = MinMaxScaler()
-scaled = scaler.fit_transform(processed_train_data)
+# pca = PCA(n_components=.95)
+# principalComponents = pca.fit_transform(processed_train_data) 
+
+
 
 # wcss = []
 # for i in range(1,15):
@@ -50,30 +56,33 @@ scaled = scaler.fit_transform(processed_train_data)
 
 #scaled.columns = cols
 
-processed_train_data.to_csv('./test.csv',index=False)
+#processed_train_data.to_csv('./test.csv',index=False)
 
-kmeans = KMeans(n_clusters = 9, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
-y_kmeans = kmeans.fit_predict(scaled)
+# kmeans = KMeans(n_clusters = 9, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
+# y_kmeans = kmeans.fit_predict(scaled)
 
-fig, ax = plt.subplots(figsize=(13,11))
-ax = fig.add_subplot(111, projection='3d')
-plt.scatter(scaled[y_kmeans == 0,0],scaled[y_kmeans == 0,1], s= 50, c= 'red',label= 'Cluster 1')
-plt.scatter(scaled[y_kmeans == 1,0], scaled[y_kmeans == 1,1], s= 50, c= 'blue', label= 'Cluster 2')
-plt.scatter(scaled[y_kmeans == 2,0], scaled[y_kmeans == 2,1], s= 50, c= 'green', label= 'Cluster 3')
-plt.scatter(scaled[y_kmeans == 3,0], scaled[y_kmeans == 3,1], s= 50, c= 'cyan', label= 'Cluster 4')
-plt.scatter(scaled[y_kmeans == 4,0], scaled[y_kmeans == 4,1], s= 50, c= 'magenta', label= 'Cluster 5')
-plt.scatter(scaled[y_kmeans == 5,0], scaled[y_kmeans == 5,1], s= 50, c= 'gray', label= 'Cluster 6')
-plt.scatter(scaled[y_kmeans == 6,0], scaled[y_kmeans == 6,1], s= 50, c= 'purple', label= 'Cluster 7')
-plt.scatter(scaled[y_kmeans == 7,0], scaled[y_kmeans == 7,1], s= 50, c= 'pink', label= 'Cluster 8')
-plt.scatter(scaled[y_kmeans == 8,0], scaled[y_kmeans == 8,1], s= 50, c= 'silver', label= 'Cluster 9')
+# fig, ax = plt.subplots(figsize=(13,11))
+# ax = fig.add_subplot(111, projection='3d')
+# plt.scatter(scaled[y_kmeans == 0,0],scaled[y_kmeans == 0,1], s= 50, c= 'red',label= 'Cluster 1')
+# plt.scatter(scaled[y_kmeans == 1,0], scaled[y_kmeans == 1,1], s= 50, c= 'blue', label= 'Cluster 2')
+# plt.scatter(scaled[y_kmeans == 2,0], scaled[y_kmeans == 2,1], s= 50, c= 'green', label= 'Cluster 3')
+# plt.scatter(scaled[y_kmeans == 3,0], scaled[y_kmeans == 3,1], s= 50, c= 'cyan', label= 'Cluster 4')
+# plt.scatter(scaled[y_kmeans == 4,0], scaled[y_kmeans == 4,1], s= 50, c= 'magenta', label= 'Cluster 5')
+# plt.scatter(scaled[y_kmeans == 5,0], scaled[y_kmeans == 5,1], s= 50, c= 'gray', label= 'Cluster 6')
+# plt.scatter(scaled[y_kmeans == 6,0], scaled[y_kmeans == 6,1], s= 50, c= 'purple', label= 'Cluster 7')
+# plt.scatter(scaled[y_kmeans == 7,0], scaled[y_kmeans == 7,1], s= 50, c= 'pink', label= 'Cluster 8')
+# plt.scatter(scaled[y_kmeans == 8,0], scaled[y_kmeans == 8,1], s= 50, c= 'silver', label= 'Cluster 9')
 
-# centroids
-plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:,1], s= 300, c= 'yellow', label= 'Centroids')
-plt.title('Clusters')
-plt.legend()
-plt.savefig('clusters.png')
-plt.show()
+# # centroids
+# plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:,1], s= 300, c= 'yellow', label= 'Centroids')
+# plt.title('Clusters')
+# plt.legend()
+# plt.savefig('clusters.png')
+# plt.show()
 
+dbscan = DBSCAN(eps = 0.25, min_samples = 10)
+dbscan.fit(processed_train_data)
+labels = dbscan.labels_
 
 
 
@@ -90,20 +99,26 @@ plt.show()
 # kmeans.fit(X_std)
 
 # kmeans.labels_
+print(list(set(labels)))
 
-# ans = []
-# for index, row in test_data.iterrows():
-#     if(kmeans.labels_[row['col_1']]==kmeans.labels_[row['col_2']]):
-#         #print(kmeans.labels_[row['col_1']],kmeans.labels_[row['col_2']])
-#         ans.append([str(index),str(1)])
-#     else:
-#         ans.append([str(index),str(0)])
+for i in list(set(labels)):
+    print(i,labels.tolist().count(i))
+
+output = labels
+
+ans = []
+for index, row in test_data.iterrows():
+    if(output[row['col_1']]==output[row['col_2']]):
+        #print(output[row['col_1']],output[row['col_2']])
+        ans.append([str(index),str(1)])
+    else:
+        ans.append([str(index),str(0)])
         
         
-# with open('ans'+str(0)+'.csv', 'w', newline='') as outfile:
-#     writer = csv.writer(outfile)
-#     writer.writerow(['id', 'ans'])
-#     writer.writerows(ans)
+with open('ans'+str(0)+'.csv', 'w', newline='') as outfile:
+    writer = csv.writer(outfile)
+    writer.writerow(['id', 'ans'])
+    writer.writerows(ans)
 
 
 # view the cluster labels
