@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
+import math
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import DBSCAN
 from sklearn.decomposition import PCA
@@ -108,11 +110,16 @@ for i in list(set(output)):
 ans = []
 count = 0
 for index, row in test_data.iterrows():
-    #if(train_data.loc[row['col_1'],'key']==train_data.loc[row['col_2'],'key']):
+    diff = processed_train_data.iloc[row['col_1']].sub(processed_train_data.iloc[row['col_2']])
+    # 將差值平方
+    squared = diff.pow(2)
+    # 將平方值開根號
+    distance = math.sqrt(squared.sum())
         
-    if(output[row['col_1']]==output[row['col_2']] 
-       or train_data.loc[row['col_1'],'key']==train_data.loc[row['col_2'],'key']):
-        #print(output[row['col_1']],output[row['col_2']])
+    if(distance<0.8):
+
+        print(distance)
+        
         ans.append([str(index),str(1)])
         count +=1
     else:
