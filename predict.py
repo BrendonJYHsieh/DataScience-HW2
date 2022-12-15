@@ -14,7 +14,10 @@ train_data = pd.read_csv("train.csv").drop("song_id", axis=1)
 test_data = pd.read_csv("test_3000.csv")
 
 processed_train_data = train_data
-processed_train_data.drop(columns=['duration_ms', 'popularity'])
+processed_train_data = processed_train_data.drop(columns=['duration_ms', 'popularity','loudness','mode','acousticness'])
+
+# https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404
+# Instrumentalness — Most of the songs seem to have a value close to or equal to 0. Again, dropping the parameter.
 
 #processed_train_data = processed_train_data.filter(items=["Feature 1"], axis=1)
 
@@ -29,17 +32,14 @@ processed_train_data.drop(columns=['duration_ms', 'popularity'])
 # processed_train_data = pd.concat([processed_train_data, dummy], axis=1)
 # processed_train_data = processed_train_data.drop("Feature 13", axis=1)
 
-le = LabelEncoder()
-processed_train_data['key'] = le.fit_transform(processed_train_data['key'])
-processed_train_data = processed_train_data.values
-
 scaler = MinMaxScaler(feature_range=(0, 1))
-processed_train_data = scaler.fit_transform(processed_train_data)
+X = scaler.fit_transform(processed_train_data)
+processed_train_data = pd.DataFrame(X, columns=processed_train_data.columns, index=processed_train_data.index)
+
+print(processed_train_data)
 
 # pca = PCA(n_components=.95)
 # principalComponents = pca.fit_transform(processed_train_data) 
-
-
 
 # wcss = []
 # for i in range(1,15):
@@ -61,6 +61,8 @@ processed_train_data = scaler.fit_transform(processed_train_data)
 
 gmm = GaussianMixture(n_components=2).fit(processed_train_data)
 labels = gmm.predict(processed_train_data)
+#0 24685
+#1 15429
 
 # fig, ax = plt.subplots(figsize=(13,11))
 # ax = fig.add_subplot(111, projection='3d')
@@ -91,20 +93,28 @@ labels = gmm.predict(processed_train_data)
 # print(pca.n_components_) 
 # X_transformed = pca.transform(X_std)
 
-# kmeans = KMeans(n_clusters=13,init='k-means++',random_state=42)
-# kmeans.fit(X_std)
+# kmeans = KMeans(n_clusters=2,init='k-means++')
+# clustering = kmeans.fit(processed_train_data)
 
-# kmeans.labels_
+# clustering = DBSCAN(eps=0.2,min_samples=10).fit(processed_train_data)
+
+
 
 
 output = labels
 for i in list(set(output)):
     print(i,output.tolist().count(i))
+    
 ans = []
+count = 0
 for index, row in test_data.iterrows():
-    if(output[row['col_1']]==output[row['col_2']]):
+    #if(train_data.loc[row['col_1'],'key']==train_data.loc[row['col_2'],'key']):
+        
+    if(output[row['col_1']]==output[row['col_2']] 
+       or train_data.loc[row['col_1'],'key']==train_data.loc[row['col_2'],'key']):
         #print(output[row['col_1']],output[row['col_2']])
         ans.append([str(index),str(1)])
+        count +=1
     else:
         ans.append([str(index),str(0)])
         
@@ -114,6 +124,7 @@ with open('ans'+str(0)+'.csv', 'w', newline='') as outfile:
     writer.writerow(['id', 'ans'])
     writer.writerows(ans)
 
+print(count)
 
 # view the cluster labels
 # print(model.labels_)
