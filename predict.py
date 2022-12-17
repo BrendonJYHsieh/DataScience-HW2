@@ -16,7 +16,7 @@ train_data = pd.read_csv("train.csv").drop("song_id", axis=1)
 test_data = pd.read_csv("test_3000.csv")
 
 processed_train_data = train_data
-processed_train_data = processed_train_data.drop(columns=['duration_ms', 'popularity','loudness','mode','acousticness'])
+processed_train_data = processed_train_data.drop(columns=['duration_ms', 'popularity','loudness','mode'])
 
 # https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404
 # Instrumentalness — Most of the songs seem to have a value close to or equal to 0. Again, dropping the parameter.
@@ -61,8 +61,8 @@ print(processed_train_data)
 
 #processed_train_data.to_csv('./test.csv',index=False)
 
-gmm = GaussianMixture(n_components=2).fit(processed_train_data)
-labels = gmm.predict(processed_train_data)
+# gmm = GaussianMixture(n_components=2).fit(processed_train_data)
+# labels = gmm.predict(processed_train_data)
 #0 24685
 #1 15429
 
@@ -103,9 +103,9 @@ labels = gmm.predict(processed_train_data)
 
 
 
-output = labels
-for i in list(set(output)):
-    print(i,output.tolist().count(i))
+# output = labels
+# for i in list(set(output)):
+#     print(i,output.tolist().count(i))
     
 ans = []
 count = 0
