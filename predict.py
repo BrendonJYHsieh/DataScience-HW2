@@ -116,7 +116,7 @@ for index, row in test_data.iterrows():
     # 將平方值開根號
     distance = math.sqrt(squared.sum())
         
-    if(distance<1.12):
+    if(distance<1.15):
 
         print(distance)
         
