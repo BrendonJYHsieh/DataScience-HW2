@@ -16,7 +16,7 @@ train_data = pd.read_csv("train.csv").drop("song_id", axis=1)
 test_data = pd.read_csv("test_3000.csv")
 
 processed_train_data = train_data
-processed_train_data = processed_train_data.drop(columns=['duration_ms', 'popularity','loudness','mode'])
+#processed_train_data = processed_train_data.drop(columns=['duration_ms', 'popularity','loudness','mode','instrumentalness'])
 
 # https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404
 # Instrumentalness — Most of the songs seem to have a value close to or equal to 0. Again, dropping the parameter.
@@ -116,7 +116,7 @@ for index, row in test_data.iterrows():
     # 將平方值開根號
     distance = math.sqrt(squared.sum())
         
-    if(distance<1.15):
+    if(distance<1.5):
 
         print(distance)
         
