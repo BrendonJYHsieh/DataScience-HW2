@@ -62,8 +62,6 @@ print(processed_train_data)
 
 #processed_train_data.to_csv('./test.csv',index=False)
 
-# gmm = GaussianMixture(n_components=2).fit(processed_train_data)
-# labels = gmm.predict(processed_train_data)
 #0 24685
 #1 15429
 
@@ -107,20 +105,22 @@ print(processed_train_data)
 # output = labels
 # for i in list(set(output)):
 #     print(i,output.tolist().count(i))
+
+gmm = GaussianMixture(n_components=2).fit(processed_train_data)
+labels = gmm.predict(processed_train_data)
     
 ans = []
 count = 0
 for index, row in test_data.iterrows():
-    diff = processed_train_data.iloc[row['col_1']].sub(processed_train_data.iloc[row['col_2']])
-    # 將差值平方
-    squared = diff.pow(2)
-    # 將平方值開根號
-    distance = math.sqrt(squared.sum())
-        
-    if(distance<1.51):
+    x = processed_train_data.iloc[row['col_1']].to_numpy()
+    y = processed_train_data.iloc[row['col_2']].to_numpy()
 
-        #print(distance)
-        
+    
+    # # 將差值平方
+    # squared = diff.pow(2)
+    # # 將平方值開根號
+    distance = np.sqrt(np.sum((x - y) ** 2))
+    if(distance<1.51):
         ans.append([str(index),str(1)])
         count +=1
     else:
