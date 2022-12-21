@@ -50,7 +50,7 @@ print(processed_train_data)
 # wcss = []
 # for i in range(1,15):
 #   kmeans = KMeans(n_clusters = i, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
-#   kmeans.fit(scaled)
+#   kmeans.fit(processed_train_data)
 #   wcss.append(kmeans.inertia_)
 # plt.plot(range(1,15), wcss, 'o')
 # plt.plot(range(1 , 15) , wcss , '-' , alpha = 0.5)
@@ -60,6 +60,15 @@ print(processed_train_data)
 # plt.savefig('Elbow_Method.png')
 # plt.show()
 # print(wcss)
+
+kmeans = KMeans(n_clusters=3,random_state=0)
+
+kmeans.fit(X)
+
+labels = kmeans.labels_
+
+# plt.hist(labels, bins=100)
+# plt.show()
 
 #scaled.columns = cols
 
@@ -127,7 +136,7 @@ for index, row in test_data.iterrows():
     distance = np.sqrt(np.sum((x - y) ** 2))
     distances.append(distance)
     print(distance)
-    if(distance<1.51):
+    if(distance<1.3 or labels[row['col_1']]==labels[row['col_2']]):
         ans.append([str(index),str(1)])
         count +=1
     else:
