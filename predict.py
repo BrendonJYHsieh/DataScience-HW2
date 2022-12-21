@@ -15,9 +15,12 @@ import csv
 train_data = pd.read_csv("train.csv").drop("song_id", axis=1)
 test_data = pd.read_csv("test_3000.csv")
 
+selected_columns = ['popularity','acousticness','liveness','loudness','speechiness','mode','instrumentalness']
+#processed_train_data = train_data[selected_columns]
+
 processed_train_data = train_data
-processed_train_data = processed_train_data.drop(columns=['duration_ms'])
-#processed_train_data = processed_train_data.drop(columns=['duration_ms', 'popularity','loudness','mode','instrumentalness']
+#processed_train_data = processed_train_data.drop(columns=['duration_ms'])
+#processed_train_data = processed_train_data.drop(columns=['acousticness','liveness','duration_ms','loudness','speechiness','mode','instrumentalness'])
 
 # https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404
 # Instrumentalness — Most of the songs seem to have a value close to or equal to 0. Again, dropping the parameter.
@@ -110,6 +113,7 @@ gmm = GaussianMixture(n_components=2).fit(processed_train_data)
 labels = gmm.predict(processed_train_data)
     
 ans = []
+distances = []
 count = 0
 for index, row in test_data.iterrows():
     x = processed_train_data.iloc[row['col_1']].to_numpy()
@@ -119,20 +123,27 @@ for index, row in test_data.iterrows():
     # # 將差值平方
     # squared = diff.pow(2)
     # # 將平方值開根號
+
     distance = np.sqrt(np.sum((x - y) ** 2))
+    distances.append(distance)
+    print(distance)
     if(distance<1.51):
         ans.append([str(index),str(1)])
         count +=1
     else:
         ans.append([str(index),str(0)])
-        
+
+
         
 with open('ans'+str(0)+'.csv', 'w', newline='') as outfile:
     writer = csv.writer(outfile)
     writer.writerow(['id', 'ans'])
     writer.writerows(ans)
 
+
 print(count)
+plt.hist(distances, bins=100)
+plt.show()
 
 # view the cluster labels
 # print(model.labels_)
